@@ -37,14 +37,14 @@ $ npm install
 ```bash
 # development
 $ change in file .env.dev `NODE_ENV=dev`
-$ `./up.sh` or `docker-compose up -d`
+$ in terminal `./up.sh`
 
 # production mode
 $ change in file .env.dev `NODE_ENV=prod`
-$ `./up.sh` or `docker-compose up -d`
+$ in terminal `./up.sh`
 
 # stop containers
-$ `./down.sh` or `docker-compose down`
+$ in terminal `./down.sh`
 ```
 
 ## Test
