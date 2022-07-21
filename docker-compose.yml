@@ -17,12 +17,14 @@ services:
       - ./src:/app/src
       - /app/node_modules
     restart: unless-stopped
-    links:
-      - database
     depends_on:
       - database
+    networks:
+      - server-net
 
   database:
+    networks:
+      - server-net
     container_name: database
     image: postgres:14-alpine
     environment:
@@ -36,3 +38,6 @@ services:
 
 volumes:
   pgdata:
+
+networks:
+  server-net:

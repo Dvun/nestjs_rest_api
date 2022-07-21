@@ -3,10 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TagModule } from './tag/tag.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import config from './config';
+import AppDataSource from './ormconfig';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(config), TagModule],
+  imports: [
+    ConfigModule.forRoot({envFilePath: '.env'}),
+    TypeOrmModule.forRoot(AppDataSource.options),
+    TagModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
