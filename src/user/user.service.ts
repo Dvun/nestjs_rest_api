@@ -28,11 +28,11 @@ export class UserService {
   }
 
   async login(dto: LoginUserDto): Promise<UserEntity> {
-    const user = await this.userRepository.findOneBy({email: dto.email})
+    const user = await this.userRepository.findOne({where: {email: dto.email},
+      select: ['id', 'email', 'password', 'username', 'bio', 'image', 'articles']})
     if (!user) throw new HttpException('Credentials are not valid', HttpStatus.UNPROCESSABLE_ENTITY)
     const isPasswordCompare = compare(dto.password, user.password)
     if (!isPasswordCompare) throw new HttpException('Credentials are not valid', HttpStatus.UNPROCESSABLE_ENTITY)
-    delete user.password;
     return user;
   }
 

@@ -32,7 +32,6 @@ export class UserController {
   @UseGuards(AuthGuard)
   async currentUser(
     @User() user: UserEntity): Promise<IUserResponse> {
-    delete user.password
     return this.userService.buildUserResponse(user);
   }
 
@@ -42,7 +41,6 @@ export class UserController {
     @User('id') currentUserId: number,
     @Body('user') dto: UpdateUserDto): Promise<IUserResponse> {
     const user = await this.userService.updateUser(currentUserId, dto)
-    delete user.password
     return this.userService.buildUserResponse(user);
   }
 

@@ -7,6 +7,7 @@ import AppDataSource from './ormconfig';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   controllers: [AppController],
@@ -15,7 +16,8 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
     ConfigModule.forRoot({envFilePath: '.env'}),
     TypeOrmModule.forRoot(AppDataSource.options),
     TagModule,
-    UserModule
+    UserModule,
+    ArticleModule
   ],
 })
 
