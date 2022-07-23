@@ -29,10 +29,28 @@ export class ArticleService {
     if (query.tag) {
       queryBuilder.andWhere('articles.tagList LIKE :tag', {tag: `%${query.tag}%`})
     }
+    if (query.favorited) {
+      const author = await this.userRepository.findOne({where: {username: query.favorited}, relations: ['favorites']})
+      const ids = author.favorites.map((el) => el.id)
+      if (ids.length > 0) {
+        queryBuilder.andWhere('articles.authorId IN (:...ids)', {ids})
+      } else {
+        queryBuilder.andWhere('1=0')
+      }
+    }
     if (query.limit) queryBuilder.limit(query.limit)
     if (query.offset) queryBuilder.offset(query.offset)
+    let favoriteIds: number[] = []
+    if (currentUserId) {
+      const currentUser = await this.userRepository.findOne({where: {id: currentUserId}, relations: ['favorites']})
+      favoriteIds = currentUser.favorites.map((favorite) => favorite.id)
+    }
     const articles = await queryBuilder.getMany()
-    return {articles, articlesCount}
+    const articlesWithFavorites = articles.map(article => {
+      const isFavorite = favoriteIds.includes(article.id)
+      return {...article, isFavorite}
+    })
+    return {articles: articlesWithFavorites, articlesCount}
   }
 
   async create(currentUser: UserEntity, dto: CreateArticleDto): Promise<ArticleEntity> {
@@ -64,6 +82,32 @@ export class ArticleService {
       throw new HttpException('You are not an author', HttpStatus.FORBIDDEN)
     }
     return await this.articleRepository.delete(article.id)
+  }
+
+  async addArticleToFavorites(currentUserId: number, slug: string): Promise<ArticleEntity> {
+    const article = await this.articleRepository.findOneBy({slug})
+    const user = await this.userRepository.findOne({where: {id: currentUserId}, relations: ['favorites']})
+    const isNotFavorites = user.favorites.findIndex(favoriteArticle => favoriteArticle.id === article.id) === -1;
+    if (isNotFavorites) {
+      user.favorites.push(article)
+      article.favoritesCount++
+      await this.userRepository.save(user)
+      await this.articleRepository.save(article)
+    }
+    return article
+  }
+
+  async removeArticleFromFavorites(currentUserId, slug): Promise<ArticleEntity> {
+    const article = await this.articleRepository.findOneBy({slug})
+    const user = await this.userRepository.findOne({where: {id: currentUserId}, relations: ['favorites']})
+    const articleIndex = user.favorites.findIndex(favoriteArticle => favoriteArticle.id === article.id);
+    if (articleIndex) {
+      user.favorites.splice(articleIndex, 1)
+      article.favoritesCount--
+      await this.userRepository.save(user)
+      await this.articleRepository.save(article)
+    }
+    return article;
   }
 
 

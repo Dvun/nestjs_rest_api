@@ -68,4 +68,22 @@ export class ArticleController {
     return this.articleService.deleteBySlug(currentUserId, slug)
   }
 
+  @Post(':slug/favorite')
+  @UseGuards(AuthGuard)
+  async addArticleToFavorites(
+    @User('id') currentUserId: number,
+    @Param('slug') slug: string): Promise<IArticleResponse> {
+    const article = await this.articleService.addArticleToFavorites(currentUserId, slug)
+    return this.articleService.buildArticleResponse(article)
+  }
+
+  @Delete(':slug/favorite')
+  @UseGuards(AuthGuard)
+  async removeArticleFromFavorites(
+    @User('id') currentUserId: number,
+    @Param('slug') slug: string): Promise<IArticleResponse> {
+    const article = await this.articleService.removeArticleFromFavorites(currentUserId, slug)
+    return this.articleService.buildArticleResponse(article)
+  }
+
 }

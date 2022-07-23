@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { ArticleModule } from './article/article.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   controllers: [AppController],
@@ -17,7 +18,8 @@ import { ArticleModule } from './article/article.module';
     TypeOrmModule.forRoot(AppDataSource.options),
     TagModule,
     UserModule,
-    ArticleModule
+    ArticleModule,
+    ProfileModule
   ],
 })
 
