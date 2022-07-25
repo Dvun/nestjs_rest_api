@@ -6,12 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArticleEntity } from './article.entity';
 import { UserService } from '../user/user.service';
 import { UserEntity } from '../user/user.entity';
+import { FollowEntity } from '../profile/follow.entity';
 
 
 @Module({
   controllers: [ArticleController],
   providers: [ArticleService, AuthGuard, UserService],
-  imports: [TypeOrmModule.forFeature([ArticleEntity, UserEntity])]
+  imports: [TypeOrmModule.forFeature([ArticleEntity, UserEntity, FollowEntity])]
 })
 
 export class ArticleModule {}
